@@ -1,0 +1,172 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+@{
+
+    for (int i = 0; i < 4; i++)
+    {
+        //Model.Description += Model.Description; //OBRISATI POSLE
+
+    }
+}
+<div class="row">
+    <div class="col-8 bg-dark rounded pl-0 d-flex">
+        @{
+            bool bigImage = Model.Description.ToCharArray().Count() < 440;
+        }
+        <div class="h-100 float-left"
+             style="@(bigImage
+       ? "width:39%;" : "max-width:200px;")">
+
+            <img id="slika"
+                 src="/images/noimage.png"
+                 data-src="@("/images/" +
+Model?.Category?.Slug + "/" + Model?.Slug + "/")"
+                 class="rounded-left mr-3 border-dark border-top border-left @(bigImage ? "border-bottom": "")"
+                 style="object-fit: contain;
+                width: 100%;
+                height: 100%;
+                @(bigImage ? "": "border-bottom-left-radius: 0 !important;")" />
+
+        </div>
+        <div class="ml-3">
+
+            <h3 class="text-light font-italic">
+                @(Model.Title.ToCharArray().Count() < 31
+? Model.Title :
+(new string(Model.Title.ToCharArray().Take(27).ToArray<char>()) + "...")
+        )
+            </h3>
+            <p class="text-light lead">
+                @Model.Description
+            </p>
+
+        </div>
+    </div>
+    <div class="col-4">
+        <form id="forma">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" id="SubProductId" />
+            <div class="bg-dark rounded text-center">
+                <h1 class="text-light" id="priceShow" data-valute="&nbsp;din.">din.</h1>
+
+            </div>
+
+
+            @if (ViewBag?.PackageCount > 0)
+            {
+                <div class="d-flex align-items-center form-group bg-dark rounded p-1">
+                    <label class="text-light text-center font-weight-bold m-0 control-label col-8">Paket</label>
+                    <select id="Package" class="col-4 form-control" asp-items="@ViewBag.PackageList"></select>
+                </div>
+
+            }
+
+            @if (ViewBag?.TasteCount > 0)
+            {
+                <div class="d-flex align-items-center form-group bg-dark rounded p-1">
+                    <label class="text-light text-center font-weight-bold m-0 control-label col-8">Ukus</label>
+                    <select id="Taste" class="col-4 form-control" asp-items="@ViewBag.TasteList"></select>
+                </div>
+            }
+
+            @if (ViewBag?.SizeCount > 0)
+            {
+                <div class="d-flex align-items-center form-group bg-dark rounded p-1">
+                    <label class="text-light text-center font-weight-bold m-0 control-label col-8">Velicina</label>
+                    <select id="Size" class="col-4 form-control" asp-items="@ViewBag.SizeList"></select>
+                </div>
+            }
+
+            @if (ViewBag?.ColorCount > 0)
+            {
+                <div class="d-flex align-items-center form-group bg-dark rounded p-1">
+                    <label class="text-light text-center font-weight-bold m-0 control-label col-8">Boja</label>
+                    <select id="Color" class="col-4 form-control" asp-items="@ViewBag.ColorList"></select>
+                </div>
+            }
+
+            <div class="d-flex align-items-center form-group bg-dark rounded p-1">
+                <label class="text-light text-center font-weight-bold m-0 control-label col-8">Kolicina</label>
+                <input id="Amount" class="form-control" value="1" type="number" min="1" />
+            </div>
+
+            <div class="form-group">
+                <input id="addToCartBtn" type="submit" value="Add to cart" class="btn btn-success w-100" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+        function UpdateImageAndPrice() {
+
+            $.post("/cart/ChangeProductParameters"
+                , {
+                    ProductId: $("#Id").val(),
+                    Package: $("#Package").val(),
+                    Taste: $("#Taste").val(),
+                    Size: $("#Size").val(),
+                    Color: $("#Color").val()
+
+                }, function (data) {
+                    if (data) {
+                        $("#priceShow").html(data.price + $("#priceShow").data("valute"));
+
+                        $("#slika").attr("src", $("#slika").data("src") + data.image);
+
+                        $("#addToCartBtn").prop("disabled", false);
+
+                        $("#SubProductId").val(data.id);
+                    }
+                    else {
+                        $("#priceShow").html("???");
+                        $("#slika").attr("src", "/images/noimage.png");
+
+                        $("#addToCartBtn").prop("disabled", true);
+                        $("#SubProductId").val(null);
+
+                    }
+
+                })
+
+        }
+
+        UpdateImageAndPrice();
+
+        $(".form-control").change(function () {
+            UpdateImageAndPrice();
+        });
+
+
+
+        $("#addToCartBtn").click(function () {
+            let subProductId = $("#SubProductId").val();
+            let amount = $("#Amount").val();
+
+            if (!subProductId || !amount) {
+                return false;
+            }
+
+            $.post("/cart/AddToCart", {
+
+                SubProductId: subProductId,
+                Amount: amount
+            }, function (data) {
+                printCartItems(data);
+            }
+            );
+
+            //pozovi ajax koji dodaje u sesiju i  iz te sesije iscitaj i prikazi u korpi
+
+            $("#cartHeader").removeClass("d-none");
+            return false;
+        });
+
+    </script>
+}

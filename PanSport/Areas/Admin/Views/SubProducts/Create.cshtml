@@ -1,0 +1,94 @@
+﻿@model SubProduct
+
+@{
+    ViewData["Title"] = "Novi podproizvod";
+}
+
+<h1>Create</h1>
+<h4>SubProduct</h4>
+@if (Model.Product != null)
+{
+    <h4>@Model.Product.Title</h4>
+}
+<hr />
+<div class="row justify-content-center">
+    <div class="col-4">
+        <form asp-action="Create">
+
+            <input asp-for="Id" type="hidden" value="0" />
+
+            <input id="referer" name="referer" value="@ViewBag?.Referer" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+
+                @*"~/images/@Model?.Product?.Category?.Slug/@Model?.Product?.Slug/@Model.Image"*@
+
+                <img src="~/images/noimage.png"
+                     width="100"
+                     height="100"
+                     class="subProductImage cursot-pointer" />
+                <input type="hidden" asp-for="@Model.Image" />
+
+                <input type="file" asp-for="@Model.ImageFile" class="d-none subProductImageFile" />
+
+
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Package" class="control-label"></label>
+                <input asp-for="Package" class="form-control" />
+                <span asp-validation-for="Package" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Taste" class="control-label"></label>
+                <input asp-for="Taste" class="form-control" />
+                <span asp-validation-for="Taste" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Size" class="control-label"></label>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Color" class="control-label"></label>
+                <input asp-for="Color" class="form-control" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+
+            @if (Model.Product == null)
+            {
+
+                <div class="form-group">
+                    <label asp-for="ProductId" class="control-label"></label>
+                    <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                </div>
+            }
+            else
+            {
+                <input asp-for="ProductId" value="@Model.Product.Id" type="hidden" />
+            }
+
+
+
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

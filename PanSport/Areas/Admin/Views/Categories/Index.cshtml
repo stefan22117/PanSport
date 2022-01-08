@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Category>
+
+@{
+    ViewData["Title"] = "Kategorije";
+}
+
+<a asp-controller="Categories"
+   asp-action="Create"
+   class="btn btn-success mb-2 text-light cursot-pointer">Dodaj novu kategoriju</a>
+<div class="bg-warning rounded p-3 overflow-hidden shadow">
+
+
+    <div class="row align-items-center mb-2">
+        <div class="col-2 text-center text-light font-weight-bold">Naslov</div>
+        <div class="col-6 text-center text-light font-weight-bold">Opis</div>
+        <div class="col-4">
+        </div>
+    </div>
+    <hr class="w-100" />
+    @foreach (var category in Model)
+    {
+        <div class="row bg-warning mb-2 align-items-center">
+
+            <div class="col-2 text-center text-light">
+                <a asp-controller="Categories"
+                   asp-action="Details"
+                   asp-route-id="@category.Id"
+                   class="text-light">@category.Title</a>
+            </div>
+
+            <div class="col-6 text-center text-light">
+                @(category.Description.Length>40? String.Join("", category.Description.ToList().Take(40))+"..." : category.Description)
+            </div>
+
+            <div class="col-4 text-center text-light">
+                <div class="btn-group">
+
+                    <a class="btn btn-outline-info cursot-pointer"
+                       asp-controller="Categories"
+                       asp-action="Edit"
+                       asp-route-id="@category.Id"><i class="fas fa-edit"></i></a>
+
+                    <a class="btn btn-outline-secondary cursot-pointer"
+                       asp-controller="Categories"
+                       asp-action="Details"
+                       asp-route-id="@category.Id"><i class="fas fa-info-circle"></i></a>
+
+                    <a class="btn btn-outline-danger cursot-pointer"
+                       asp-controller="Categories"
+                       asp-action="Delete"
+                       asp-route-id="@category.Id"><i class="fas fa-trash"></i></a>
+
+                </div>
+            </div>
+        </div>
+        @if (category == Model.Last())
+        {
+            break;
+        }
+        <hr class="w-75" />
+    }
+</div>

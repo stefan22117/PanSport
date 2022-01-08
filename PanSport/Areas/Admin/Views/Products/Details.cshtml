@@ -1,0 +1,226 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Details";
+
+    SubProduct newSubProduct = new SubProduct()
+    {
+        ProductId = Model.Id
+    };
+
+}
+
+<h1>Details</h1>
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class="col-sm-10">
+
+            <a asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="Details"
+               asp-route-id="@Model?.Category?.Id">
+                @Model?.Category?.Title
+            </a>
+
+        </dd>
+    </dl>
+
+
+    <hr />
+    <h3>Podproizvodi ovog proizvoda:</h3>
+    <a class="btn btn-success"
+       id="addNewSubProduct"
+       asp-controller="SubProducts"
+       asp-action="Create"
+       asp-route-id="@Model.Id">
+        Dodaj novi podproizvod
+    </a>
+    <hr />
+    <div id="addNewSubProductForm"
+         class="d-none">
+
+        <div class="row text-center justify-content-center">
+
+            <div class="col-2">Slika</div>
+            <div class="col-1">Paket</div>
+            <div class="col-2">Ukus</div>
+            <div class="col-1">Veličina</div>
+            <div class="col-1">Cena</div>
+            <div class="col-1">Boja</div>
+            <div class="col-3"></div>
+        </div>
+
+
+
+        <form enctype="multipart/form-data"
+              asp-controller="SubProducts"
+              asp-action="Create"
+              class="row justify-content-center align-items-center my-1">
+            <input type="hidden" asp-for="@newSubProduct.ProductId" />
+            <div class="col-2 text-center">
+                <img src="~/images/noimage.png"
+                     width="100"
+                     height="100"
+                     class="subProductImage rounded" />
+                <input type="hidden" asp-for="@newSubProduct.Image" />
+
+                <input type="file" asp-for="@newSubProduct.ImageFile" class="d-none subProductImageFile" />
+            </div>
+
+            <div class="col-1">
+                <input asp-for="@newSubProduct.Package" class="form-control" />
+            </div>
+
+            <div class="col-2">
+                <input asp-for="@newSubProduct.Taste" class="form-control" />
+            </div>
+
+            <div class="col-1">
+                <input asp-for="@newSubProduct.Size" class="form-control" />
+            </div>
+
+            <div class="col-1">
+                <input asp-for="@newSubProduct.Price" class="form-control" />
+            </div>
+
+            <div class="col-1">
+                <input asp-for="@newSubProduct.Color" class="form-control" />
+            </div>
+
+            <div class="col-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="reset" value="Reset" class="btn btn-outline-primary" />
+            </div>
+        </form>
+        <hr />
+    </div>
+
+
+
+
+
+
+
+
+
+
+    @if (Model?.SubProducts?.Count > 0)
+    {
+
+        <div class="row text-center">
+
+            <div class="col-2">Slika</div>
+            <div class="col-1">Paket</div>
+            <div class="col-2">Ukus</div>
+            <div class="col-1">Veličina</div>
+            <div class="col-1">Cena</div>
+            <div class="col-1">Boja</div>
+            <div class="col-3"></div>
+        </div>
+
+
+        @foreach (var subProduct in Model?.SubProducts)
+        {
+
+            <form enctype="multipart/form-data"
+                  asp-controller="SubProducts"
+                  asp-action="SaveFromProduct"
+                  class="row align-items-center my-1">
+                <input type="hidden" asp-for="@subProduct.Id" />
+                <input type="hidden" asp-for="@subProduct.ProductId" />
+                <div class="col-2 text-center">
+                    <img src="~/images/@(subProduct.Image != null ?
+                Model?.Category?.Slug+"/"+ Model?.Slug+"/"+subProduct.Image
+                :"noimage.png")"
+                         width="100"
+                         height="100"
+                         class="subProductImage rounded" />
+                    <input type="hidden" asp-for="@subProduct.Image" />
+
+                    <input type="file" asp-for="@subProduct.ImageFile" class="d-none subProductImageFile" />
+                </div>
+
+                <div class="col-1">
+                    <input asp-for="@subProduct.Package" class="form-control" />
+                </div>
+
+                <div class="col-2">
+                    <input asp-for="@subProduct.Taste" class="form-control" />
+                </div>
+
+                <div class="col-1">
+                    <input asp-for="@subProduct.Size" class="form-control" />
+                </div>
+
+                <div class="col-1">
+                    <input asp-for="@subProduct.Price" class="form-control" />
+                </div>
+                
+                <div class="col-1">
+                    <input asp-for="@subProduct.Color" class="form-control" />
+                </div>
+
+                <div class="col-3 btn-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <input type="reset" value="Reset" class="btn btn-outline-primary" />
+                    <input type="submit" value="Delete" class="btn btn-danger" formaction="/Delete/@subProduct.Id" />
+                </div>
+            </form>
+        }
+
+
+        <hr />
+    }
+    else
+    {
+        <p>Nema Podproizvoda ovog proizvoda</p>
+    }
+
+
+
+
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+
+</div>
+
+
+
+@section scripts{
+
+    <script>
+        $("#addNewSubProduct").click(function () {
+            if ($("#addNewSubProductForm").hasClass("d-none")) {
+                $("#addNewSubProductForm").removeClass("d-none");
+                $(this).removeClass("btn-success");
+                $(this).addClass("btn-outline-success");
+            }
+            else {
+                $("#addNewSubProductForm").addClass("d-none");
+                $(this).addClass("btn-success");
+                $(this).removeClass("btn-outline-success");
+            }
+
+            return false;
+        })
+    </script>
+}

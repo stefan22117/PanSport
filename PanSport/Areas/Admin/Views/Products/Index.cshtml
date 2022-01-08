@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Proizvodi";
+}
+
+<a asp-controller="Products"
+   asp-action="Create"
+   asp-route-id="@Model.FirstOrDefault()?.CategoryId"
+   class="btn btn-success mb-2 text-light cursot-pointer">Dodaj novi proizvod</a>
+<div class="bg-warning rounded p-3 overflow-hidden shadow">
+
+
+    <div class="row align-items-center mb-2">
+        <div class="col-2 text-center text-light font-weight-bold">Slika</div>
+        <div class="col-2 text-center text-light font-weight-bold">Naslov</div>
+        <div class="col-2 text-center text-light font-weight-bold">Opis</div>
+        <div class="col-2 text-center text-light font-weight-bold">Kategorija</div>
+        <div class="col-4">
+        </div>
+    </div>
+    <hr class="w-100" />
+    @foreach (var product in Model)
+    {
+        <div class="row bg-warning mb-2 align-items-center">
+
+            <div class="col-2 text-center text-light">
+                <a asp-action="Details"
+                   asp-route-id="@product.Id">
+                    <img src="~/images/@(product.ShowImage != null ?
+                product?.Category?.Slug+"/"+ product?.Slug+"/"+product.ShowImage
+                :"noimage.png")"
+                         class="rounded"
+                         width="100"
+                         height="100" />
+
+                </a>
+            </div>
+            <div class="col-2 text-center text-light">
+                <a asp-controller="Products"
+                   asp-action="Details"
+                   asp-route-id="@product.Id"
+                   class="text-light">@product.Title</a>
+            </div>
+
+            <div class="col-2 text-center text-light">
+                @(product.Description.Length>20? String.Join("", product.Description.ToList().Take(20))+"..." : product.Description)
+            </div>
+
+            <div class="col-2 text-center text-light">
+                <a asp-controller="Categories"
+                   asp-action="Details"
+                   asp-route-id="@product.CategoryId"
+                   class="text-light">@product.Category.Title</a>
+            </div>
+
+
+
+
+
+
+
+            <div class="col-4 text-center text-light">
+                <div class="btn-group">
+
+                    <a class="btn btn-outline-info cursot-pointer"
+                       asp-controller="Products"
+                       asp-action="Edit"
+                       asp-route-id="@product.Id"><i class="fas fa-edit"></i></a>
+
+                    <a class="btn btn-outline-secondary cursot-pointer"
+                       asp-controller="Products"
+                       asp-action="Details"
+                       asp-route-id="@product.Id"><i class="fas fa-info-circle"></i></a>
+
+                    <a class="btn btn-outline-danger cursot-pointer"
+                       asp-controller="Products"
+                       asp-action="Delete"
+                       asp-route-id="@product.Id"><i class="fas fa-trash"></i></a>
+
+                </div>
+            </div>
+        </div>
+        @if (product == Model.Last())
+        {
+            break;
+        }
+        <hr class="w-75" />
+    }
+</div>

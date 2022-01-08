@@ -1,0 +1,101 @@
+﻿@model List<User>
+
+<div class="bg-dark p-3 rounded">
+    @if (Model.Count > 0)
+    {
+
+
+        @*<div class="text-right">
+            <a asp-action="MarkAllAsReadNot" id="markAllAsReadNotBtn" class="btn btn-info">Mark all as read</a>
+            <a asp-action="RemoveAllNot" id="removeAllNotBtn" class="btn btn-danger">Remove all</a>
+        </div>*@
+
+        @foreach (User user in Model)
+        {
+
+            <div class="row mt-2 text-center align-items-center cursot-pointer userRowIndex text-light"
+                 userName="@user.UserName">
+
+                <div class="col-2">
+                    @user.UserName
+                </div>
+            
+                <div class="col-3">
+                    @(user.Roles == null || user.Roles.Count == 0 ? "NO ROLE": String.Join(", ", user.Roles))
+                </div>
+
+                <div class="col-2">
+                    @if (user.IsInRole("user"))
+                    {
+                        <a class="btn btn-danger"
+                           asp-action="RemoveFromRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="user">Remove User Role</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-action="AddToRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="user">Add User Role</a>
+                    }
+                </div>
+
+                <div class="col-2">
+                    @if (user.IsInRole("moderator"))
+                    {
+                        <a class="btn btn-danger" asp-action="RemoveFromRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="moderator">Remove Moderator Role</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-action="AddToRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="moderator">Add Moderator Role</a>
+                    }
+                </div>
+
+                <div class="col-2">
+                    @if (user.IsInRole("admin"))
+                    {
+                        <a class="btn btn-danger" asp-action="RemoveFromRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="admin">Remove Admin Role</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-action="AddToRole"
+                           asp-route-id="@user.AppUserId"
+                           asp-route-role="admin">Add Admin Role</a>
+                    }
+                </div>
+
+
+
+
+
+
+
+                <div class="col-1 text-right">
+                    <a class="btn btn-outline-danger badge rounded-circle" 
+                       asp-action="RemoveUser"
+                       asp-route-id="@user.AppUserId"
+                       >
+                        <i class="fas fa-times"></i>
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+        }
+
+    }
+    else
+    {
+        <h1 class="text-center text-secondary font-italic">Nema korisnika...</h1>
+    }
+</div>
+

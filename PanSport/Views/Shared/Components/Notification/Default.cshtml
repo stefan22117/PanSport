@@ -1,0 +1,68 @@
+﻿@model List<Notification>
+<div>
+    @if (Model.Count() == 0)
+    {
+
+        <div id="notificationBtn"
+             class="nav-link text-dark cursot-pointer">
+            <i class="far fa-bell text-warning"></i>
+        </div>
+        <div id="notificationsDiv"
+             class="position-absolute pt-1 w-50"
+             style="display: none; right:20px;z-index:3;">
+            <div class="bg-primary mr-5 ml-auto rotate-45"
+                 style="width: 10px; height: 10px;"></div>
+            <div class="bg-light rounded border border-primary shadow-lg overflow-hidden position-relative notificationsDiv2 h-50" style="top:-5px;">
+                
+                <div class="d-flex justify-content-end">
+                    <a asp-controller="Notifications" asp-action="Index">Vidi sve notifikacije</a>
+                </div>
+
+                <p class="p-1 text-center font-italic text-secondary">Nemate novih notifikacija...</p>
+
+
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <div id="notificationBtn"
+             class="nav-link text-dark cursot-pointer">
+            <i class="fas fa-bell text-warning"></i>
+
+            <sup id="notificationsCount" class="badge badge-primary border border-dark">
+                @Model.Count()
+            </sup>
+        </div>
+
+
+        <div id="notificationsDiv"
+             class="position-absolute pt-1 w-50"
+             style="display: none;">
+            <div class="bg-primary ml-3 rotate-45"
+                 style="width: 10px; height: 10px;"></div>
+            <div class="bg-light rounded border border-primary shadow-lg overflow-hidden position-relative notificationsDiv2 h-50" style="top:-5px;">
+
+                <div class="d-flex justify-content-end">
+                    <a asp-controller="Notifications" asp-action="Index">Vidi sve notifikacije</a>
+                </div>
+
+
+                @foreach (var notification in Model.AsQueryable().Take(3))
+                {
+                    <div class="row mt-1 bg-info text-light border border-info cursot-pointer notificationRow" data-notificationId="@notification.Id">
+                        <div class="col-3 text-info bg-light ">
+                            @notification.DateTime.Day/@notification.DateTime.Month/@notification.DateTime.Year @notification.DateTime.Hour:@notification.DateTime.Minute
+                        </div>
+
+                        <div class="col-9">
+                            @notification.Title
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,82 @@
+﻿@model CheckOut
+@{
+    ViewData["Title"] = "CheckOut";
+}
+
+<div class="d-flex justify-content-center">
+
+
+    <div class="bg-dark rounded p-2 w-75 shadow-lg">
+        @if (Model.User == null)
+        {
+            <span class="text-light text-center my-3 d-block">Ulogujte se...</span>
+            <form class="form-group d-flex justify-content-between"
+                  asp-controller="Account"
+                  asp-action="Login">
+
+                @*id="Login_ReturnUrl" name="Login.ReturnUrl" *@
+
+
+                <input type="hidden" asp-for="@Model.Login.ReturnUrl" />
+
+
+                <input class="col-4 form-control" asp-for="@Model.Login.Email" placeholder="email"/>
+
+                <input class="col-4 form-control" asp-for="@Model.Login.Password"  placeholder="password"/>
+
+                <input type="submit" class="btn btn-outline-light" value="Login" />
+
+            </form>
+
+            <span class="text-light text-center mt-3 d-block">...ili popunite sledeća polja :</span>
+        }
+
+            <form asp-action="CheckOut">
+                
+
+                <div class="form-group mb-0">
+                    <label class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.Name"></label>
+                    <input class="form-control" asp-for="@Model.OrderInfo.Name" />
+                </div>
+
+                <div class="form-group mb-0">
+                    <label class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.SurName"></label>
+                    <input class="form-control" asp-for="@Model.OrderInfo.SurName" />
+                </div>
+
+                <div class="form-group row mb-0">
+                    <div class="col-6">
+                        <label class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.Street"></label>
+                        <input class="form-control" asp-for="@Model.OrderInfo.Street" />
+                    </div>
+
+                    <div class="col-6">
+                        <label class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.StreetNumber"></label>
+                        <input class="form-control" asp-for="@Model.OrderInfo.StreetNumber" />
+                    </div>
+                </div>
+
+                <div class="form-group mb-0">
+                    <label class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.Phone"></label>
+                    <input class="form-control" asp-for="@Model.OrderInfo.Phone" />
+                </div>
+
+                <div class="form-group">
+                    <label  class="col-form-label text-light text-center" asp-for="@Model.OrderInfo.Comment"></label>
+                    <textarea class="form-control" asp-for="@Model.OrderInfo.Comment"></textarea>
+                </div>
+
+
+                <input type="submit" class="form-control btn btn-outline-success" value="Poruci" />
+
+
+
+            </form>
+
+    </div>
+
+</div>
+
+@section scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

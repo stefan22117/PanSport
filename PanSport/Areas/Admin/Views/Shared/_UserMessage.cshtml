@@ -1,0 +1,49 @@
+﻿@using PanSport.Infrastructure
+
+@if (TempData.ContainsKey("UserMessage"))
+{
+    UserMessage data = TempData.Get<UserMessage>("UserMessage");
+
+    <div id="UserMessage" class="alert-dismissible alert alert-@data.Classes" data-seconds="@data.Seconds">
+
+        <span>
+            @data.Message
+        </span>
+
+        <span class="close-button bg-transparent border-0 p-0 mr-1 position-absolute">
+            <i class="far fa-times-circle"></i>
+        </span>
+    </div>
+
+}
+
+
+@section Scripts{ 
+<script>
+    //ne radi odavde, premestiti u site.js ????
+    $(() => {
+        if ($("#UserMessage")) {
+            let userMessageDOM = $("#UserMessage");
+
+            userMessageDOM.children(".close-button").click((e) => {
+                userMessageDOM.remove();
+            })
+
+            let seconds = userMessageDOM.data("seconds");
+            if (seconds) {
+
+                setTimeout(() => {
+                    userMessageDOM.fadeOut({
+                        duration: 1000,
+                        complete: () => {
+                            userMessageDOM.remove();
+                        }
+                    });
+                }, seconds * 1000)
+            }
+        }
+    }
+    );
+</script>
+
+}

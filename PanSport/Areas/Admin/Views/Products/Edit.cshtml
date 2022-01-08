@@ -1,0 +1,220 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ShowImage" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ManufacturerId" class="control-label"></label>
+                <select asp-for="ManufacturerId" class="form-control" asp-items="ViewBag.ManufacturerId"></select>
+                <span asp-validation-for="ManufacturerId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="reset" value="Reset" class="btn btn-primary" id="reset" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+
+@*<hr />
+
+
+
+
+
+    @if (Model?.SubProducts.Count > 0)
+    {
+        <style>
+            .podijum {
+                scroll-behavior: smooth;
+            }
+
+                .podijum::-webkit-scrollbar {
+                    display: none;
+                }
+        </style>
+
+        <h4>Slika za prikaz osnovnog proizvoda</h4>
+        <div class="podijum border-info border row flex-nowrap overflow-auto">
+
+
+            @foreach (var subProduct in Model.SubProducts)
+            {
+                bool selectedImage = Model?.Category?.Slug + "/" + Model?.Slug + "/" + subProduct.Image ==
+                 Model?.Category?.Slug + "/" + Model?.Slug + "/" + Model.ShowImage;
+
+
+
+
+
+                if (subProduct?.Image == null || subProduct.Image.Contains("noimage"))
+                {
+                    break;//sta ako ima subproducta, a sve su noimage?
+                }
+                <div class="okvir col-4 p-3">
+
+                    <div class="slikica d-flex justify-content-center cursor-pointer @(selectedImage ? "border border-info": "border border-dark")">
+                        <img src="~/images/@(
+                               Model?.Category?.Slug+"/"+ Model?.Slug+"/"+subProduct.Image)"
+                             data-image="@subProduct.Image"
+                             width="50"
+                             height="50" />
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="d-flex justify-content-center m-3">
+            <div class="btn-group">
+                <button class="btn btn-dark levo">&lt;&lt;&lt;</button>
+                <button class="btn btn-dark desno">&gt;&gt;&gt;</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Nema podproizvoda za ovaj proizvod</p>
+        <p><a asp-action="Details" asp-route-id="@Model.Id">Dodaj podproizvod</a></p>
+    }
+
+
+    <hr />*@
+
+
+
+
+@if (Model?.SubProducts.Count > 0)
+{
+    <style>
+        .podijum {
+            scroll-behavior: smooth;
+        }
+
+            .podijum::-webkit-scrollbar {
+                display: none;
+            }
+    </style>
+
+    <h4>Slika za prikaz osnovnog proizvoda</h4>
+    <div class="podijum border-info border row flex-nowrap overflow-auto py-1 rounded shadow">
+
+
+        @foreach (var subProduct in Model.SubProducts)
+        {
+            bool selectedImage = Model?.Category?.Slug + "/" + Model?.Slug + "/" + subProduct.Image ==
+             Model?.Category?.Slug + "/" + Model?.Slug + "/" + Model.ShowImage;
+
+
+
+
+
+            if (subProduct?.Image == null || subProduct.Image.Contains("noimage"))
+            {
+                break;//sta ako ima subproducta, a sve su noimage?
+            }
+            <div class="okvir col-3 p-1 rounded mx-1 @(selectedImage ? "bg-info": "bg-white")">
+
+                <div class="slikica rounded d-flex justify-content-center bg-white cursor-pointer">
+                    <img src="~/images/@(
+                           Model?.Category?.Slug+"/"+ Model?.Slug+"/"+subProduct.Image)"
+                         data-image="@subProduct.Image"
+                         width="150"
+                         height="150" />
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model?.SubProducts.Count > 3)
+    {
+
+        <div class="d-flex justify-content-center m-3">
+            <div class="btn-group">
+                <button class="btn btn-info levo"><i class="fas fa-caret-left"></i></button>
+                <button class="btn btn-info desno"><i class="fas fa-caret-right"></i></button>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>Nema podproizvoda za ovaj proizvod</p>
+    <p><a asp-action="Details" asp-route-id="@Model.Id">Dodaj podproizvod</a></p>
+}
+
+
+<hr />
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(".okvir").click(function () {
+
+            for (let slikica of $(".okvir")) {
+                $(slikica).removeClass("border border-info shadow");
+            }
+            $(this).addClass("border border-info shadow");
+            $("#ShowImage").val($(this).children("div").children("img").data("image"));
+        })
+
+
+        $("#reset").click(function () {
+            for (let slikica of $(".okvir")) {
+                $(slikica).removeClass("border border-info shadow");
+            }
+
+        })
+
+        let skrol = 0;
+        $(".levo").click(function () {
+            //alert($(".podijum").width()/3)
+
+            skrol -= $(".podijum").width() / 3
+            $(".podijum").scrollLeft(skrol)
+        })
+        $(".desno").click(function () {
+            //alert($(".podijum").width()/3)
+            skrol += $(".podijum").width() / 3
+            $(".podijum").scrollLeft(skrol)
+
+        })
+
+    </script>
+}

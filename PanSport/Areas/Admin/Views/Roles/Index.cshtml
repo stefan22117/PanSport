@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+
+@{
+    ViewData["Title"] = "Roles";
+
+}
+
+<h1>Roles</h1>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr class="home">
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Name)*@
+                Role
+            </th>
+            <th>
+                Users
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>
+                    @role.Id
+                </td>
+                <td>
+                    @role.Name
+                </td>
+                <td user-role="@role.Id">
+                    users for this role
+                </td>
+                <td>
+                    <div class="btn-group">
+
+                    <a class="btn btn-outline-info" asp-action="Edit" asp-route-id="@role.Id">Edit</a>
+                    
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@role.Id">Delete</a>
+
+                    </div>
+                   
+
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

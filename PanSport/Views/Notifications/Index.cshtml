@@ -1,0 +1,95 @@
+﻿@model List<Notification>
+
+<div class="bg-dark p-3 rounded">
+    @if (Model.Count > 0)
+    {
+
+
+        <div class="text-right">
+            <a asp-action="MarkAllAsReadNot" id="markAllAsReadNotBtn" class="btn btn-info">Mark all as read</a>
+            <a asp-action="RemoveAllNot" id="removeAllNotBtn" class="btn btn-danger">Remove all</a>
+        </div>
+
+        @foreach (Notification notification in Model)
+        {
+            string readClasses = "bg-light text-info border border-info";
+
+            if (!notification.Read)
+            {
+                readClasses = "bg-info text-light border border-light";
+            }
+
+            <div class="row mt-2 text-center align-items-center cursot-pointer @readClasses notificationRowIndex"
+                 data-notificationId="@notification.Id">
+
+                <div class="col-3">
+                    @notification.DateTime.Day/@notification.DateTime.Month/@notification.DateTime.Year @notification.DateTime.Hour:@notification.DateTime.Minute
+                </div>
+                <div class="col-8">
+                    @notification.Title
+                </div>
+
+
+
+
+                <div class="col-1 text-right">
+
+
+                    <button class="btn btn-outline-danger removeNotificationBtn badge rounded-circle" data-notificationId="@notification.Id">
+                        <i class="fas fa-times"></i>
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+
+        }
+
+    }
+    else
+    {
+<h1 class="text-center text-secondary font-italic">Nemate notifikacija...</h1>
+    }
+</div>
+
+
+@section scripts{
+    <script>
+        $(".notificationRowIndex").click(function () {
+            
+            let row = this;
+            let notificationId = $(row).data("notificationid");
+
+            $(".notificationRow[data-notificationid='" + notificationId + "']").click();
+
+
+            $.post("/notifications/ReadNotification", { id: notificationId }, function (data) {
+                $(row).removeClass("bg-info text-light border border-light");
+                $(row).addClass("bg-light text-info border border-info");
+            });
+        });
+
+        
+
+        $(".removeNotificationBtn").click(function () {
+            let notificationId = $(this).data("notificationid");
+            
+
+            let rowIndex = $(".notificationRowIndex[data-notificationid='" + notificationId + "']");
+            rowIndex.click();
+
+
+            $.post("/notifications/RemoveNotification", { id: notificationId }, function (data) {
+
+                $(rowIndex).stop(true, false).slideUp(1000,
+                    function () {
+                        $(rowIndex).remove();
+                    });
+            });
+
+            });
+    </script>
+}

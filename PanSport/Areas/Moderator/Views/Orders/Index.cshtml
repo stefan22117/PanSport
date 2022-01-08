@@ -1,0 +1,208 @@
+﻿@model List<Order>
+<h2>
+    Sve narudzbine
+</h2>
+<div class="bg-dark p-3 rounded">
+
+    @foreach (Order order in Model)
+    {
+        <div class="row mt-2 text-center">
+            <div class="col-3 text-light">
+                <p>Order number: #@order.Id</p>
+            </div>
+            <div class="col-1 text-light">
+                <p>
+                    @if (order.Sent)
+                    {
+                        <span class="text-info">Poslata</span>
+                    }
+                    else
+                    {
+                        if (order.Paused)
+                        {
+                            <span class="text-warning">Pauzirana</span>
+                        }
+                        else
+                        {
+                            <span class="text-success">Obrada</span>
+
+                        }
+                    }
+                </p>
+            </div>
+
+
+            <div class="col-3">
+             <button class="btn btn-info seeProductsBtn vidi" data-orderId="@order.Id">Vidi proizovde &#9660;</button>
+            </div>
+            <div class="col-2 text-light">
+
+                @order.DateTime.Day/@order.DateTime.Month/@order.DateTime.Year @order.DateTime.Hour:@order.DateTime.Minute
+            </div>
+
+            <div class="col-3">
+
+                <a
+                   asp-area="Moderator"
+                   asp-controller="Orders"
+                   asp-action="ChangeOrder"
+                   asp-route-id="@order.Id"
+                   class="btn btn-info">Detalji</a>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="orderInfo overflow-hidden" data-orderId="@order.Id" style="display: none;">
+
+            <div class="row bg-info">
+                <div class="col-3">
+                    Slika
+                </div>
+                <div class="col-3">
+                    Proizvod
+                </div>
+
+                <div class="col-1">
+                    Kolicina
+                </div>
+
+                <div class="col-1">
+                    Cena
+                </div>
+
+                <div class="col-1">
+                    Ukupno
+                </div>
+
+                <div class="col-3 text-right text-light">
+                    <b>
+                        @order.GrandTotal
+                    </b>
+                </div>
+
+            </div>
+
+            @foreach (var orderItem in order.OrderItems)
+            {
+                <div class="row bg-info align-items-center">
+                    <div class="col-3">
+
+                        <img src="~/images/@(orderItem.SubProduct.Product.ShowImage != null ?
+                @orderItem.SubProduct.Product.Category.Slug+"/"+  orderItem.SubProduct.Product.Slug+"/"+ orderItem.SubProduct.Image
+                :"noimage.png")"
+                             width="50"
+                             height="50" />
+
+                    </div>
+                    <div class="col-3">
+                        <span>
+
+
+
+
+                            <a href="@("/proizvodi" + "/" + orderItem.SubProduct?.Product?.Category?.Slug
+                            + "/" + orderItem.SubProduct?.Product?.Slug)">
+                                @orderItem.SubProduct.Product.Title
+                            </a>
+                        </span>
+                    </div>
+                    <div class="col-1">
+                        <span>
+                            @orderItem.Amount
+                        </span>
+                    </div>
+                    <div class="col-1">
+                        <span>
+                            @orderItem.SubProduct.Price
+                        </span>
+                    </div>
+
+                    <div class="col-1">
+                        <span>
+                            @{
+                                double cartTotal = 0;
+                            }
+                            @(orderItem?.SubProduct?.Price * orderItem?.Amount)
+                            @{
+                                cartTotal += (double)(orderItem?.SubProduct?.Price * orderItem?.Amount);
+
+
+                            }
+                        </span>
+                    </div>
+
+
+
+
+                    @*<div class="col-3">
+                            <input type="hidden" class="subProductIdCart" value="@orderItem.SubProductId" />
+                            <button class="btn-sm btn-warning minusCartItemBtn" @(orderItem.Amount == 1 ? "disabled" : null)>-</button>
+                            <button class="btn-sm btn-primary minusCartItemBtn">+</button>
+                            <button class="btn-sm btn-danger removeCartItemBtn">Remove</button>
+                        </div>*@
+
+
+                </div>
+            }
+        </div>
+    }
+
+
+</div>
+
+
+@section scripts{
+    <script>
+
+        $(".seeProductsBtn").click(function () {
+
+
+            if ($(this).hasClass("sakrij")) {
+                $(this).html("Vidi proizovde &#9660;").removeClass("sakrij").addClass("vidi");
+            }
+            else if ($(this).hasClass("vidi")) {
+
+                $(this).html("Sakrij proizovde &#9650;").removeClass("vidi").addClass("sakrij");
+            }
+
+
+
+
+
+            let orderId = $(this).data("orderid");
+
+            let info = $(".orderInfo").filter((i, x) => {
+                return $(x).data("orderid") == orderId;
+            });
+
+
+
+            $(info)
+                .stop(true, true)
+                .animate({
+                    height: "toggle",
+                    opacity: "toggle"
+                }, 1000);
+
+        })
+
+
+    </script>
+
+
+
+    <script>
+        //ovo vec postoji u ChangeOrder.cshtml
+        $(".copyToCartBtn").click(function () {
+            let orderId = $(this).data("orderid");
+
+            $.post("/cart/copyToCart/" + orderId, {}, function (data) {
+                printCartItems(data);
+                $("#cartHeader").removeClass("d-none");
+            })
+        });
+    </script>
+}

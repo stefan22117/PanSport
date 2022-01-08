@@ -1,0 +1,205 @@
+﻿@model List<Order>
+<div class="bg-dark p-3 rounded">
+    @if (Model.Count() > 0)
+    {
+        @foreach (Order order in Model)
+        {
+            <div class="row mt-2 text-center">
+                <div class="col-3 text-light">
+                    <p>Order number: #@order.Id</p>
+                </div>
+                <div class="col-1 text-light">
+                    <p>
+                        @if (order.Sent)
+                        {
+                            <span class="text-info">Poslata</span>
+                        }
+                        else
+                        {
+                            if (order.Paused)
+                            {
+                                <span class="text-warning">Pauzirana</span>
+                            }
+                            else
+                            {
+                                <span class="text-success">Obrada</span>
+
+                            }
+                        }
+                    </p>
+                </div>
+
+
+                <div class="col-3">
+                    @if (ViewBag.Order != null && ViewBag.Order.Id == order.Id)
+                    {
+                        <button class="btn btn-info seeProductsBtn sakrij" data-orderId="@order.Id">Sakrij proizovde &#9650;</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-info seeProductsBtn vidi" data-orderId="@order.Id">Vidi proizovde &#9660;</button>
+
+                    }
+                </div>
+                <div class="col-2 text-light">
+
+                    @order.DateTime.Day/@order.DateTime.Month/@order.DateTime.Year @order.DateTime.Hour:@order.DateTime.Minute
+                </div>
+
+                <div class="col-3">
+                    @*@if (order.Sent)*@
+                    <button class="btn btn-outline-success copyToCartBtn" data-orderId="@order.Id" title="Copy to cart">
+                        <i class="far fa-copy"></i>
+                        &nbsp;
+                        <i class="fas fa-shopping-basket"></i>
+
+                    </button>
+
+                    @*else*@
+                    <a asp-controller="Cart"
+                       asp-action="ChangeOrder"
+                       asp-route-id="@order.Id"
+                       class="btn btn-info">Detalji</a>
+
+                </div>
+
+            </div>
+
+
+            var style = "display:none;";
+
+
+            if (ViewBag.Order != null && ViewBag.Order.Id == order.Id)
+            {
+                style = "";
+            }
+            <div class="orderInfo overflow-hidden rounded bg-light" data-orderId="@order.Id" style="@style">
+                @{
+                    double cartTotal2 = 0;
+                }
+                @foreach (var orderItem in order.OrderItems)
+                {
+                    <div class="row bg-info align-items-center my-1 rounded text-center text-light">
+                        <div class="col-1 p-1">
+                            <a href="#">
+                                @*@orderItem.SubProduct.SubProductLink*@
+
+                                @* u ovaj lik=nk da se proslede parametri koji su dodati, u korpi: pakovanje velicina, ukus... *@
+                                <img src="~/images/@(orderItem.SubProduct.Product.ShowImage != null ?
+                @orderItem.SubProduct.Product.Category.Slug+"/"+  orderItem.SubProduct.Product.Slug+"/"+ orderItem.SubProduct.Image
+                :"noimage.png")"
+                                     class="rounded"
+                                     style="
+    width:50px;
+    height:50px;" />
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            <span>
+                                <a class="text-light text-decoration-none"
+                                   href="@*orderItem.SubProductLink*@">@orderItem.SubProduct.Product.Title</a>
+                            </span>
+                        </div>
+                        <div class="col-2">
+                            <span>
+                                920g // HARDCODED
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <span class="font-weight-bold">
+                                @orderItem.Amount
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <span>
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="col-2 p-0">
+                            <span class="font-weight-bold">
+                                @orderItem?.SubProduct?.Price din.
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <span>
+                                <i class="fas fa-equals"></i>
+                            </span>
+                        </div>
+
+                        <div class="col-2 p-0">
+                            <span class="font-weight-bold">
+                                @(orderItem?.SubProduct?.Price * orderItem?.Amount) din.
+                                @{
+                                    cartTotal2 += (double)(orderItem?.SubProduct?.Price * orderItem?.Amount);
+                                }
+                            </span>
+                        </div>
+
+
+                    </div>
+
+                }
+                <h4 class="text-info text-center">Ukupno: @cartTotal2 din.</h4>
+            </div>
+        }
+
+    }
+    else
+    {
+        <h1 class="text-center text-secondary font-italic">Nemate porudzbina...</h1>
+    }
+</div>
+
+
+@section scripts{
+    <script>
+
+        $(".seeProductsBtn").click(function () {
+
+
+            if ($(this).hasClass("sakrij")) {
+                $(this).html("Vidi proizovde &#9660;").removeClass("sakrij").addClass("vidi");
+            }
+            else if ($(this).hasClass("vidi")) {
+
+                $(this).html("Sakrij proizovde &#9650;").removeClass("vidi").addClass("sakrij");
+            }
+
+
+
+
+
+            let orderId = $(this).data("orderid");
+
+            let info = $(".orderInfo").filter((i, x) => {
+                return $(x).data("orderid") == orderId;
+            });
+
+
+
+            $(info)
+                .stop(true, true)
+                .animate({
+                    height: "toggle",
+                    opacity: "toggle"
+                }, 1000);
+
+        })
+
+
+    </script>
+
+
+
+    <script>
+        //ovo vec postoji u ChangeOrder.cshtml
+        $(".copyToCartBtn").click(function () {
+            let orderId = $(this).data("orderid");
+
+            $.post("/cart/copyToCart/" + orderId, {}, function (data) {
+                printCartItems(data);
+                $("#cartHeader").removeClass("d-none");
+            })
+        });
+    </script>
+}

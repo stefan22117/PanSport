@@ -1,0 +1,132 @@
+﻿@model IEnumerable<SubProduct>
+
+@{
+    ViewData["Title"] = "Podproizvodi";
+}
+<a asp-controller="SubProducts"
+   asp-action="Create"
+   asp-route-id="@Model.FirstOrDefault()?.ProductId"
+   class="btn btn-success mb-2 text-light cursot-pointer">Dodaj novi podproizvod</a>
+<div class="bg-warning rounded p-3 overflow-hidden shadow">
+
+
+    <div class="row align-items-center mb-2">
+        <div class="col-2 text-center text-light font-weight-bold">Slika</div>
+        <div class="col-2 text-center text-light font-weight-bold">Proizvod</div>
+        <div class="col-1 text-center text-light font-weight-bold">Paket</div>
+        <div class="col-1 text-center text-light font-weight-bold">Ukus</div>
+        <div class="col-1 text-center text-light font-weight-bold">Veličina</div>
+        <div class="col-1 text-center text-light font-weight-bold">Boja</div>
+        <div class="col-2 text-center text-light font-weight-bold">Cena</div>
+        <div class="col-3">
+        </div>
+    </div>
+    <hr class="w-100" />
+    @foreach (var subProduct in Model)
+    {
+<div class="row bg-warning mb-2 align-items-center">
+
+    <div class="col-2 text-center text-light">
+        <a asp-action="Details"
+           asp-route-id="@subProduct.Id">
+            <img src="~/images/@(subProduct.Image != null ?
+                subProduct?.Product?.Category?.Slug+"/"+ subProduct?.Product?.Slug+"/"+subProduct.Image
+                :"noimage.png")"
+                 width="100"
+                 height="100"
+                 class="subProductImage rounded" />
+
+        </a>
+    </div>
+    <div class="col-2 text-center text-light">
+        <a asp-controller="Products"
+           asp-action="Details"
+           asp-route-id="@subProduct.Id"
+           class="text-light">@subProduct.Product.Title</a>
+    </div>
+
+    <div class="col-1 text-center text-light">
+        @if (subProduct.Package != null)
+        {
+            <span>
+                @subProduct.Package
+            </span>
+        }
+        else
+        {
+            <i class="fas fa-times-circle"></i>
+        }
+    </div>
+
+    <div class="col-1 text-center text-light">
+        @if (subProduct.Taste != null)
+        {
+            <span>
+                @subProduct.Taste
+            </span>
+        }
+        else
+        {
+            <i class="fas fa-times-circle"></i>
+        }
+    </div>
+
+    <div class="col-1 text-center text-light">
+        @if (subProduct.Size != null)
+        {
+            <span>
+                @subProduct.Size
+            </span>
+        }
+        else
+        {
+            <i class="fas fa-times-circle"></i>
+        }
+    </div>
+
+    <div class="col-1 text-center text-light">
+        @if (subProduct.Color != null)
+        {
+            <span>
+                @subProduct.Color
+            </span>
+        }
+        else
+        {
+            <i class="fas fa-times-circle"></i>
+        }
+    </div>
+
+
+    <div class="col-2 text-center text-light">
+        @subProduct.Price
+    </div>
+
+    <div class="col-2 text-center text-light">
+        <div class="btn-group">
+
+            <a class="btn btn-outline-info cursot-pointer"
+               asp-controller="SubProducts"
+               asp-action="Edit"
+               asp-route-id="@subProduct.Id"><i class="fas fa-edit"></i></a>
+
+            <a class="btn btn-outline-secondary cursot-pointer"
+               asp-controller="SubProducts"
+               asp-action="Details"
+               asp-route-id="@subProduct.Id"><i class="fas fa-info-circle"></i></a>
+
+            <a class="btn btn-outline-danger cursot-pointer"
+               asp-controller="SubProducts"
+               asp-action="Delete"
+               asp-route-id="@subProduct.Id"><i class="fas fa-trash"></i></a>
+
+        </div>
+    </div>
+</div>
+        @if (subProduct == Model.Last())
+        {
+            break;
+        }
+        <hr class="w-75" />
+    }
+</div>

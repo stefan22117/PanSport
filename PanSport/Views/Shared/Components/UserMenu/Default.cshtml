@@ -1,0 +1,74 @@
+﻿
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="position-fixed lista bg-dark rounded-left">
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Profile">
+            <a asp-controller="Account" data-colorclass="text-success" class="text-light">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Cart">
+            <a asp-controller="Cart" asp-action="Index" data-colorclass="text-info" class="text-light">
+                <i class="fas fa-shopping-basket"></i>
+            </a>
+        </div>
+
+        @if (User.IsInRole("admin")) { 
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Admin Page">
+            <a asp-area="Admin" asp-controller="Categories" asp-action="Index" data-colorclass="text-warning" class="text-light">
+                <i class="fas fa-clipboard-list"></i>
+            </a>
+        </div>
+        }
+
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Orders">
+            <a asp-controller="Orders" data-colorclass="text-primary" class="text-light">
+                <i class="fas fa-list-ol"></i>
+            </a>
+        </div>
+
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Settings">
+            <a data-colorclass="text-secondary" class="text-light">
+                <i class="fas fa-cogs"></i>
+            </a>
+        </div>
+
+        <div class="text-center h3 p-2 my-2 cursot-pointer" title="Log out">
+            <a asp-controller="Account" asp-action="LogOut" data-colorclass="text-danger" class="text-light">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+
+
+
+    <style>
+        .lista {
+            transition: all 2s;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -100px;
+            opacity: 0;
+        }
+
+            .lista a {
+                transition: color 1s;
+            }
+    </style>
+}
+
+
+
+
+
+
+
+
+
+<script>
+
+
+
+
+</script>

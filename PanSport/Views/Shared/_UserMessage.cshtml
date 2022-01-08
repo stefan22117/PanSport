@@ -1,0 +1,17 @@
+﻿@using PanSport.Infrastructure
+
+@if (TempData.ContainsKey("UserMessage"))
+{
+    UserMessage data = TempData.Get<UserMessage>("UserMessage");
+
+    <div id="UserMessage" class="alert-dismissible alert alert-@data.Classes" data-seconds="@data.Seconds">
+
+        <span>
+            @data.Message
+        </span>
+
+        <span class="close-button bg-transparent border-0 p-0 mr-1 position-absolute">
+            <i class="far fa-times-circle"></i>
+        </span>
+    </div>
+}
